@@ -38,7 +38,23 @@ También podés armar uno desde la app ("Personalizado").
 Universo NYSE con B/M válido: 1.007 acciones (French: 1.009). El size replica bien; el B/M propio sale ~10% más alto
 (causa no resuelta; sumar impuestos diferidos lo empeora). Al operar cerca de un corte, verificá la acción a mano.
 
-## Limitaciones conocidas (datos gratuitos)
+## Replicación de retornos vs. French (VW, cortes publicados de French)
+`ffscreener/backtest.py` reconstruye los portfolios y compara los retornos mensuales con los archivos de French.
+
+Size × B/M 2×3, formación jun-2025, 12 meses (jul-2025 a jun-2026):
+| Celda | corr | acum. propio | acum. French | tracking error |
+|---|---|---|---|---|
+| Small HiBM | 0,98 | 35,3% | 40,3% | 2,6% |
+| Small MedBM | 0,99 | 48,4% | 48,5% | 2,4% |
+| Small LoBM | 0,96 | 30,0% | 30,4% | 4,5% |
+| Big HiBM | 0,98 | 52,9% | 46,6% | 3,7% |
+
+Size × Momentum 2×3, 9 meses (ene a sep 2026): Small Winner corr 0,94 (17,3% vs 19,7%), Small Loser 0,99 (6,7% vs 10,2%), Small Neutral 0,99.
+Los acumulados de 9-12 meses son una muestra corta: sirven para validar la mecánica, no para medir el tracking error con precisión.
+
+## Limitaciones conocidas
+- Las acciones de la portada SEC se reajustan por splits posteriores (`variables.split_factor`); sin eso las reverse splits inflan el ME.
+- HSBC, Toyota y otras extranjeras con nombre "Common Stock" entran al universo (CRSP las excluiría); solo afectan a megacaps. (datos gratuitos)
 - **Sin delistings** y universo *actual*: sirve para decidir qué comprar hoy, no para backtests fieles.
 - Acciones multiclase: el ME de la firma puede estar subestimado (se marca `multi_class`).
 - ME histórico usa acciones actuales × precio pasado (ignora emisiones/recompras posteriores).
