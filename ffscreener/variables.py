@@ -21,6 +21,29 @@ def june_formation_year(formation: pd.Timestamp) -> int:
     return formation.year if formation.month >= 6 else formation.year - 1
 
 
+def split_factor(px: pd.DataFrame, since: pd.Series) -> pd.Series:
+    """Producto de ratios de split posteriores a la fecha de las acciones (portada SEC).
+
+    El precio `Close` está ajustado por TODOS los splits hasta hoy; las acciones de la portada no, si el split
+    ocurrió después. Multiplicarlas por este factor las deja en la misma base que el precio histórico
+    (sin esto, una reverse split deja el ME inflado: acciones viejas × precio ajustado hacia arriba).
+    """
+    out = pd.Series(1.0, index=since.index)
+    if "Stock Splits" not in px.columns.get_level_values(0):
+        return out
+    sp = px["Stock Splits"]
+    sp = sp.loc[:, sp.fillna(0).ne(0).any()]
+    for tk in sp.columns.intersection(since.index):
+        d = since.get(tk)
+        if pd.isna(d):
+            continue
+        r = sp[tk].loc[pd.Timestamp(d) + pd.Timedelta(days=1):]
+        r = r[r.fillna(0) > 0]
+        if len(r):
+            out[tk] = float(r.prod())
+    return out
+
+
 def build_table(universe: pd.DataFrame, px: pd.DataFrame, shares: pd.DataFrame, be: dict[int, pd.DataFrame],
                 formation: pd.Timestamp) -> pd.DataFrame:
     """Una fila por acción con las variables de ordenamiento a la fecha de formación.
@@ -35,6 +58,7 @@ def build_table(universe: pd.DataFrame, px: pd.DataFrame, shares: pd.DataFrame, 
 
     u = universe.merge(shares, on="cik", how="left")
     u = u.set_index("ticker")
+    u["shares"] = u["shares"] * split_factor(px, u["shares_date"])
 
     p_f = last_price(close, formation)
     u["price"] = p_f.reindex(u.index)

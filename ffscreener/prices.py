@@ -13,15 +13,15 @@ PRICE_FILE = CACHE / "prices.parquet"
 
 
 def download_prices(tickers: list[str], start: str, end: str | None = None, chunk: int = 300, retries: int = 2) -> pd.DataFrame:
-    """Devuelve columnas MultiIndex (campo, ticker): Close (ajustado por splits), Adj Close (total return), Volume."""
+    """Devuelve columnas MultiIndex (campo, ticker): Close (ajustado por splits), Adj Close (total return), Volume, Stock Splits (ratio: 0.1 = reverse 1:10)."""
     parts = []
     for i in range(0, len(tickers), chunk):
         batch = tickers[i : i + chunk]
         for attempt in range(retries + 1):
             try:
-                d = yf.download(batch, start=start, end=end, auto_adjust=False, progress=False, threads=True, group_by="column")
+                d = yf.download(batch, start=start, end=end, auto_adjust=False, progress=False, threads=True, group_by="column", actions=True)
                 if len(d):
-                    parts.append(d[["Close", "Adj Close", "Volume"]])
+                    parts.append(d[["Close", "Adj Close", "Volume", "Stock Splits"]])
                 break
             except Exception:  # red/rate limit
                 time.sleep(5 * (attempt + 1))

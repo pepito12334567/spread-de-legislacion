@@ -71,3 +71,15 @@ def test_common_stock_filter():
     assert not universe.is_common_stock("Bar Inc. - American Depositary Shares")
     assert not universe.is_common_stock("Baz - 6.5% Series A Cumulative Preferred Stock")
     assert not universe.is_common_stock("Qux Acquisition Corp - Units")
+
+
+def test_split_factor_reverse_split_after_cover_date():
+    from ffscreener import variables
+    idx = pd.date_range("2026-01-01", periods=5)
+    sp = pd.DataFrame({"A": [0, 0, 0.1, 0, 0], "B": [0, 2.0, 0, 0, 0], "C": 0.0}, index=idx)
+    px = pd.concat({"Stock Splits": sp}, axis=1)
+    since = pd.Series(pd.to_datetime(["2026-01-02", "2026-01-02", "2026-01-02"]), index=["A", "B", "C"])
+    f = variables.split_factor(px, since)
+    assert np.isclose(f["A"], 0.1)   # reverse split posterior: acciones x0.1 (mismas bases que el precio ajustado)
+    assert f["B"] == 1.0             # el split 2:1 fue el mismo día: ya está en las acciones de la portada
+    assert f["C"] == 1.0
