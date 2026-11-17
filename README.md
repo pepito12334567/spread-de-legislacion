@@ -30,6 +30,14 @@ streamlit run app.py
 Editá `ffscreener/portfolios.yaml`: cada portfolio es una lista de *sorts* (`var`, `cuts` en percentiles NYSE, `labels`).
 También podés armar uno desde la app ("Personalizado").
 
+## Validación contra French (formación jun-2026, NYSE)
+| | p10 | p30 | p50 | p70 | p90 |
+|---|---|---|---|---|---|
+| ME (propio vs French) | −3% | −8% | +1% | +1% | +1% |
+| B/M | +6% | +16% | +11% | +10% | +9% |
+Universo NYSE con B/M válido: 1.007 acciones (French: 1.009). El size replica bien; el B/M propio sale ~10% más alto
+(causa no resuelta; sumar impuestos diferidos lo empeora). Al operar cerca de un corte, verificá la acción a mano.
+
 ## Limitaciones conocidas (datos gratuitos)
 - **Sin delistings** y universo *actual*: sirve para decidir qué comprar hoy, no para backtests fieles.
 - Acciones multiclase: el ME de la firma puede estar subestimado (se marca `multi_class`).

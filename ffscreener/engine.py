@@ -55,7 +55,10 @@ def published_cuts(var: str, cuts: list[int], formation: pd.Timestamp) -> list[f
 
 def own_cuts(table: pd.DataFrame, var: str, cuts: list[int]) -> list[float]:
     """Percentiles calculados con la muestra NYSE propia (mismo criterio que French: solo NYSE)."""
-    s = table.loc[table["exchange"] == "NYSE", var].dropna()
+    m = table["exchange"] == "NYSE"
+    if "spac" in table:  # CRSP/Compustat no incluye SPACs en la muestra de breakpoints
+        m &= ~table["spac"].fillna(False)
+    s = table.loc[m, var].dropna()
     return [float(np.percentile(s, c)) for c in cuts] if len(s) else [np.nan] * len(cuts)
 
 

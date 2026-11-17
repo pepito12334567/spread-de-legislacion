@@ -24,7 +24,7 @@ _EXCLUDE = re.compile(
     r"%|subordinated|series [a-z]\b|beneficial|partnership|fund|etf|etn|index|contingent",
     re.I,
 )
-_SPAC = re.compile(r"acquisition (corp|co|holdings)|blank check|capital corp\b.*acquisition", re.I)
+_SPAC = re.compile(r"acquisition (?:corp|co|holdings)|blank check", re.I)
 
 
 def is_common_stock(name: str) -> bool:

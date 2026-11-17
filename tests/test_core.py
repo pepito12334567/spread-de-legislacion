@@ -14,7 +14,7 @@ BM_TXT = """  ,<= 0,>0
 def test_parse_me():
     df = french.parse_breakpoints(ME_TXT, "ME")
     assert df.loc[192512, "n"] == 488
-    assert df.loc[192512, "p50"] == 15.56 - 0 or df.loc[192512, "p50"] == 13.01 + 2.55  # p50 = 10º valor
+    assert df.loc[192512, "p50"] == 15.56  # p50 = 10º valor
     assert df.loc[192512, "p100"] == 1319.00
     assert df.shape[1] == 21
 
