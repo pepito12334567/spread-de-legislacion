@@ -1,0 +1,8 @@
+pandas>=2.2
+numpy
+requests
+pyarrow
+yfinance
+streamlit
+pyyaml
+pytest

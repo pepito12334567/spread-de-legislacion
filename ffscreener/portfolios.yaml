@@ -1,0 +1,39 @@
+# Cada portfolio de French = lista de "sorts" independientes con breakpoints NYSE.
+# var: ME (market cap, M USD) | BM (book-to-market) | PRIOR_2_12 (retorno 12-2, %)
+# cuts: percentiles NYSE (múltiplos de 5). Un valor == breakpoint cae en el grupo inferior.
+# rebalance: annual (fin de junio) | monthly (fin de cada mes)
+portfolios:
+  size_bm_2x3:
+    label: "Size × B/M (2×3) — 6 portfolios"
+    rebalance: annual
+    sorts:
+      - {var: ME, cuts: [50], labels: [Small, Big]}
+      - {var: BM, cuts: [30, 70], labels: [Low, Med, High]}
+  size_bm_5x5:
+    label: "Size × B/M (5×5) — 25 portfolios"
+    rebalance: annual
+    sorts:
+      - {var: ME, cuts: [20, 40, 60, 80], labels: [ME1, ME2, ME3, ME4, ME5]}
+      - {var: BM, cuts: [20, 40, 60, 80], labels: [BM1, BM2, BM3, BM4, BM5]}
+  bm_10:
+    label: "B/M deciles — 10 portfolios"
+    rebalance: annual
+    sorts:
+      - {var: BM, cuts: [10, 20, 30, 40, 50, 60, 70, 80, 90], labels: [D1, D2, D3, D4, D5, D6, D7, D8, D9, D10]}
+  size_mom_2x3:
+    label: "Size × Momentum 12-2 (2×3) — 6 portfolios"
+    rebalance: monthly
+    sorts:
+      - {var: ME, cuts: [50], labels: [Small, Big]}
+      - {var: PRIOR_2_12, cuts: [30, 70], labels: [Loser, Neutral, Winner]}
+  size_mom_5x5:
+    label: "Size × Momentum 12-2 (5×5) — 25 portfolios"
+    rebalance: monthly
+    sorts:
+      - {var: ME, cuts: [20, 40, 60, 80], labels: [ME1, ME2, ME3, ME4, ME5]}
+      - {var: PRIOR_2_12, cuts: [20, 40, 60, 80], labels: [P1, P2, P3, P4, P5]}
+  mom_10:
+    label: "Momentum 12-2 deciles — 10 portfolios"
+    rebalance: monthly
+    sorts:
+      - {var: PRIOR_2_12, cuts: [10, 20, 30, 40, 50, 60, 70, 80, 90], labels: [D1, D2, D3, D4, D5, D6, D7, D8, D9, D10]}
